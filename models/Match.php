@@ -136,6 +136,30 @@ class Match
     /**
      * @return string
      */
+    public function getColumnName()
+    {
+        return $this->columnName;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $link
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+    }
+
+    /**
+     * @return string
+     */
     public function getTableName()
     {
         return $this->tableName;

@@ -75,4 +75,28 @@ class Category
     {
         return $this->date;
     }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnName()
+    {
+        return $this->columnName;
+    }
 }
