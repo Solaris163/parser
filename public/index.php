@@ -10,7 +10,7 @@ spl_autoload_register([new Autoload(), 'loadClass']);
 
 $request = new Request();//создаем объект $request, который прочитает команды из URL
 
-$controllerName = $request->getControllerName()?: 'home'; //имя контроллера, который будет вызван
+$controllerName = $request->getControllerName()?: 'show'; //имя контроллера, который будет вызван
 $actionName = $request->getActionName()?: 'index'; //имя экшена, который будет вызван внутри контроллера
 $params = $request->getParams(); //параметры get - запросов
 

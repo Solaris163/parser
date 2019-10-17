@@ -26,7 +26,6 @@ class ShowController extends Controller
 
     /**
      * ShowController constructor.
-     * @param $rander
      */
     public function __construct()
     {
@@ -35,10 +34,17 @@ class ShowController extends Controller
     }
 
     /**
-     *
+     * Метод показывает главную страницу со списком матчей
      */
     public function actionIndex(){
-        $this->render->renderPage('index', []);
+        //Подготовим массив $content с категориями (турнирами) и матчами внутри категорий
+        //Получим массив с элементами вида: ['Чемпионат Европы' => ['Милан - ЦСКА', 'Спартак - Манчестер']]
+        $content = [];
+        $matches = $this->matchListModel->getAllMatches(); //массив матчей, спарсенных за последний запуск приложения
+        foreach ($matches as $match){ //переберем массив с матчами заполним массив $content
+            $content[$match['categoryName']]["{$match['matchId']}"] = $match['matchName'];
+        }
+        echo $this->render->renderPage('index.php', ['content' => $content]); //отобразим страницу
     }
 
     /**
@@ -47,8 +53,8 @@ class ShowController extends Controller
      */
     public function actionMatch($params){
         $matchId = $params['id']; //найдем id матча из get-запроса
-        $html = $this->matchListModel->matchModel->getMatchContentFromDb($matchId); //найдем содержимое матча
-        echo $this->render->renderPage('match.php', ['html' => $html]); //отобразим страницу
+        $content = $this->matchListModel->matchModel->getMatchContentFromDb($matchId); //найдем содержимое матча
+        echo $this->render->renderPage('match.php', ['content' => $content]); //отобразим страницу
     }
 
 }

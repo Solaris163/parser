@@ -77,8 +77,8 @@ class MatchList
      * @return bool
      */
     public function saveCategory($categoryName){
-        $this->categoryModel->name = $categoryName;
-        $this->categoryModel->date = $this->date;
+        $this->categoryModel->setName($categoryName);
+        $this->categoryModel->setDate($this->date);
         $result = $this->categoryModel->save(); //сохраним категорию в базу данных
         $this->categoryModel->id = Db::getInstance()->getLastID();
         return $result;
@@ -96,9 +96,10 @@ class MatchList
         foreach ($matches as $match) {
             $match = pq($match);
             $matchName = $match->attr('data-event-name'); //имя матча
-            $this->matchModel->name = $matchName; //запишем в модель название матча
+            //$this->matchModel->name = $matchName;
+            $this->matchModel->setName($matchName); //запишем в модель название матча
             $matchLink = SITE_URL . $match->find('.member-link')->attr('href'); //ссылка на страницу матча
-            $this->matchModel->link = $matchLink;
+            $this->matchModel->setLink($matchLink);
             $this->matchModel->addMatch(); //добавим матч в массив для последующей записи в базу данных.
         }
         return false; //вернем false, что означает, что это не последняя страница
@@ -114,6 +115,7 @@ class MatchList
         $columnLink = $this->matchModel->getColumnLink(); //название поля со ссылками на страницы матчей
         $columnCategoryId = $this->matchModel->getColumnCategoryId(); //название поля с id категории
         $columnDate = $this->categoryModel->getColumnDate(); //название поля с датой парсинга
+
         $sql = "SELECT {$matchesTable}.id, {$columnLink} FROM {$matchesTable}
         INNER JOIN {$categoriesTable} ON {$matchesTable}.{$columnCategoryId} = {$categoriesTable}.id
         WHERE {$columnDate} = '{$this->date}'";
@@ -128,5 +130,27 @@ class MatchList
     public function getMatchContent($html){
         $doc = \phpQuery::newDocument($html);
         return $doc->find('.category-container')->html();
+    }
+
+    /**
+     * Метод находит в базе данных матчи, спарсенные за последний запуск приложения
+     * Метод возвращает массив, каждый элемент которого содержит id матча, его название и название категории (турнира)
+     * @return array
+     */
+    public function getAllMatches(){
+        $matchesTable = $this->matchModel->getTableName(); //название таблицы с матчами
+        $categoriesTable = $this->categoryModel->getTableName(); //название таблицы с категориями
+        $columnDate = $this->categoryModel->getColumnDate(); //название поля с датой парсинга
+        $columnMatchName = $this->matchModel->getColumnName(); //
+        $columnCategoryName = $this->categoryModel->getColumnName(); //
+        $columnCategoryId = $this->matchModel->getColumnCategoryId(); //
+
+        $sql = "SELECT {$matchesTable}.id AS matchId,
+        {$matchesTable}.{$columnMatchName} AS matchName,
+        {$categoriesTable}.{$columnCategoryName} AS categoryName
+        FROM {$matchesTable}
+        INNER JOIN {$categoriesTable} ON {$matchesTable}.{$columnCategoryId} = {$categoriesTable}.id
+        WHERE {$columnDate} = (SELECT MAX({$columnDate}) FROM {$categoriesTable})";
+        return Db::getInstance()->queryAll($sql);
     }
 }

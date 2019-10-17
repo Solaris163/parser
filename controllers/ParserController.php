@@ -35,6 +35,7 @@ class ParserController extends Controller
      * Экшен запускает пасинг сайта
      */
     public function actionRun(){
+        ini_set('max_execution_time', 3000);
         $this->getMatchesList(); //получим список матчей
         $this->getMatches(); //получим контент каждого матча
     }
@@ -47,11 +48,11 @@ class ParserController extends Controller
         //Передадим адрес в метод parsePage(), который вернет false если на странице не будет матчей
         $isItLastPage = $this->parseCategoryPage($url, true);
         $i = 0;
-//        while ($isItLastPage === false){ //находим адреса следующих страниц и передаем их в метод parseNextPage
-//            $url = LIST_URL . '&' . GET_REQUEST_NEXT_PAGE_START . (NEXT_PAGE + $i) . '&' . GET_REQUEST_NEXT_PAGE_END;
-//            $isItLastPage = $this->parseCategoryPage($url);
-//            $i++;
-//        }
+        while ($isItLastPage === false){ //находим адреса следующих страниц и передаем их в метод parseNextPage
+            $url = LIST_URL . '&' . GET_REQUEST_NEXT_PAGE_START . (NEXT_PAGE + $i) . '&' . GET_REQUEST_NEXT_PAGE_END;
+            $isItLastPage = $this->parseCategoryPage($url);
+            $i++;
+        }
     }
 
     /**
@@ -79,8 +80,7 @@ class ParserController extends Controller
         $matchesArr = $this->matchList->getMatchesArrFromDb();
         foreach ($matchesArr as $match){
             $this->parseMatchPage($match['link'], $match['id']);
-            sleep(1); //задержка, чтобы не заблокировали
-            if ($match['id'] > 4) exit(); //убрать это!!!!!!!!!!!!!!!!!!!!!!!!!
+            usleep(300); //задержка, чтобы не заблокировали
         }
 
     }

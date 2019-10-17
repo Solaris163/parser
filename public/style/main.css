@@ -1,0 +1,38 @@
+.main-container {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.button-home {
+    height: 25px;
+    width: 120px;
+    margin: 0 30px 10px 30px;
+    background-color: #0080CC;
+    font-size: 20px;
+    text-align: center;
+}
+
+.button-home a {
+    text-decoration: none;
+    color: white;
+}
+
+.category-name {
+    background-color: cornflowerblue;
+    height: 25px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.match-name {
+    background-color: aquamarine;
+}
+
+.match-name:hover {
+    background-color: #0099FF;
+}
+
+.match-name a {
+    text-decoration: none;
+    color: black;
+}
